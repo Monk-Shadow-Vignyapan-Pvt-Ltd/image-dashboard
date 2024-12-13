@@ -1,0 +1,360 @@
+/************************************/
+/**** 	  tailwindcss css		 ****/
+/************************************/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/************************************/
+/**** 	  tailwindcss css		 ****/
+/************************************/
+
+
+/*----------------------------------------------------------------------------------------
+* Author : Monk Shadow
+* Template Name : Monk Shadow CA
+* File : CSS File
+* Version : 1.0
+*---------------------------------------------------------------------------------------- */
+/* INDEX
+----------------------------------------------------------------------------------------
+01. Global Variables
+02. General css
+03. 
+
+-------------------------------------------------------------------------------------- */
+
+/************************************/
+/**** 	   01. Global Variables		 ****/
+/************************************/
+
+:root {
+  --mainBg: #F8F7FA;
+  --cardBg: #ffffff;
+  --accent: #F05F23;
+  --lightAccent: #FCDDD0;
+  --primaryText: #444050;
+  --secondaryText: #848484;
+  --lightText: #AFADB4;
+  --placeHolder: #E1E1E1;
+  --safeGreen: #00A329;
+  --lightGreen: #A8F0C6;
+  --dangerRed: #FF2023;
+  --lightRed: #FF787A;
+  --border: #E1E1E1;
+  --menuActive: "#EFEEF0",
+}
+
+/************************************/
+/**** 	   02. Genral CSS		 ****/
+/************************************/
+
+
+::-webkit-scrollbar {
+  display: none;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 0, 0);
+  outline: 1px solid slategrey;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url("./assets/fonts/Rubik-VariableFont_wght.ttf") format("truetype");
+  font-weight: auto;
+  font-display: swap;
+  font-style: auto;
+}
+
+body {
+  font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1em;
+  /* line-height: 1.7; */
+  line-height: 1.3;
+  font-weight: 400;
+  color: var(--font-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'monkshadow-title', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+.remove-input-style {
+  background-color: transparent;
+  padding: 0;
+}
+
+.remove-input-style:focus {
+  outline: 0;
+}
+
+input {
+  accent-color: var(--accent);
+}
+
+/* card css start */
+
+.card-shadow {
+  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* card css end */
+
+/* menu start */
+
+.active-menu-status {
+  display: none;
+}
+
+.current-menu-section .active-menu-status {
+  display: block;
+}
+
+.current-menu-item .active-menu-status {
+  display: block;
+}
+
+
+/* menu end */
+
+
+/* footer start */
+
+.icon-style {
+  g {
+    fill: var(--primaryText);
+  }
+
+  transition: 2s;
+}
+
+.icon-style:hover {
+  path {
+    fill: var(--accent);
+  }
+}
+
+/* footer end */
+
+
+/* form start */
+
+/* Change the main selected date color */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day:hover {
+  background: var(--accent) !important;
+  /* Replace with your color */
+  border-color: var(--accent) !important;
+}
+
+/* Change the hover color */
+.flatpickr-day:hover {
+  background: var(--lightAccent) !important;
+  /* Replace with your hover color */
+}
+
+/* Change the color of the confirm button in the confirmDate plugin */
+.flatpickr-confirm {
+  background-color: var(--accent) !important;
+  /* Replace with your custom color */
+  border-color: var(--accent) !important;
+}
+
+
+/* form end */
+
+
+/* Home start */
+
+/* ChartStyles.css */
+.rounded-bar {
+  border-radius: 20px;
+  /* Adjust the value for how rounded you want the edges */
+  overflow: hidden;
+  /* Ensures the bars don't extend outside the rounded corners */
+}
+
+.apexcharts-bar {
+  border-radius: 20px;
+  /* Optional: Attempt to round corners of individual bars */
+}
+
+
+
+
+/* Home end */
+
+
+
+/* Wizard Form css start */
+
+.upload-box.dragging {
+  border-color: #ff5722;
+  /* Change color when dragging */
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+
+.modal {
+  background: white;
+  padding: 20px;
+  min-width: 700px;
+  margin: auto;
+  border-radius: 8px;
+  position: relative;
+
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.sticky-buttons-container {
+  position: sticky;
+  bottom: 0;
+  background-color: transparent;
+  /* Optional, to keep the background behind the buttons */
+  z-index: 10;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+
+.required::after {
+  content: ' *';
+  font-size: 16px;
+  color: gray;
+  /* Color for the asterisk */
+}
+
+
+/* Wizard Form css end */
+
+.rdt_TableHeadRow {
+  background-color: var(--mainBg) !important;
+  /* color: var(--cardBg); */
+}
+
+.ReactModalPortal {
+  position: relative;
+  z-index: 99;
+}
+
+.huEWhF {
+  background: #ffffff !important;
+}
+
+/* Testimonial select start */
+.css-13cymwt-control {
+  background-color: #f8f7fa !important;
+  border: 0 !important;
+}
+
+.css-t3ipsp-control {
+  box-shadow: none !important;
+  border: 4px solid;
+  border-color: var(--accent) !important;
+}
+
+.css-t3ipsp-control:hover {
+  border-color: var(--accent) !important;
+}
+
+.css-1p3m7a8-multiValue {
+  background-color: var(--lightAccent) !important;
+  border-radius: 4px !important;
+  padding-left: 6px;
+  padding-right: 4px;
+}
+
+/* Testimonial select end */
+
+.ql-container.ql-snow {
+  min-height: 150px !important;
+}
+
+
+/* loader css start */
+
+
+.loader {
+  height: 2em;
+  width: 2em;
+  border-radius: 100%;
+  background: var(--accent);
+  display: block;
+  margin: 10em auto;
+  position: relative;
+  animation: spin 2s ease infinite;
+}
+
+.loader:before,
+.loader:after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: inherit;
+  width: inherit;
+  background: inherit;
+  border-radius: inherit;
+  animation: spin 2s ease infinite;
+}
+
+.loader:before {
+  left: -2.3em;
+}
+
+.loader:after {
+  left: 2.3em;
+}
+
+@keyframes spin {
+  0% {
+    top: 0;
+    transform: rotate(0deg);
+  }
+
+  50% {
+    top: -4em;
+    transform: rotate(-180deg);
+  }
+
+  100% {
+    top: 0;
+    transform: rotate(-360deg);
+  }
+}
+
+/* loader css end */

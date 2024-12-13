@@ -5,7 +5,7 @@ import { Logo } from './Icons/Logo'
 import MenuSectionIcon from './MenuSectionIcon'
 import MenuItemIcon from './MenuItemIcon'
 // import { MenuComponent } from './MenuComponent'
-import  HideSidebar  from './Icons/hideSidebar'
+import { HideSidebar } from './Icons/hideSidebar'
 import { useRoles } from '../RolesContext';
 import { UpArrow } from './Icons/UpArrow'
 

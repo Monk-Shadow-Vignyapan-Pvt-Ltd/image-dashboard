@@ -16,12 +16,13 @@ import { FaPlus } from 'react-icons/fa6';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { IoIosInformationCircleOutline } from "react-icons/io";
 
-const Placement = () => {
-    const [placementImage, setPlacementImage] = useState(null);
-    const [placementName,setPlacementName] = useState('');
+const StudentsPlaced = () => {
+    const [studentName, setStudentName] = useState('');
+    const [wherePlaced, setWherePlaced] = useState('');
+    const [studentImage, setStudentImage] = useState(null);
     const [file, setFile] = useState(null);
-    const [placements, setPlacements] = useState([]);
-    const [editingPlacement, setEditingPlacement] = useState(null);
+    const [students, setStudents] = useState([]);
+    const [editingStudent, setEditingStudent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -33,26 +34,27 @@ const Placement = () => {
     const {users} = useRoles();
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchPlacements = async () => {
+    const fetchStudents = async () => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/placements/getPlacements`);
-            setPlacements(response.data.placements);
+            const response = await axios.get(`${API_BASE_URL}/studentsPlaced/getStudentsPlaced`);
+            setStudents(response.data.students);
             setIsLoading(false)
         } catch (error) {
-            console.error('Error fetching placement partners:', error);
-            toast.error('Failed to fetch placement partners.');
+            console.error('Error fetching students:', error);
+            toast.error('Failed to fetch students.');
         }
     };
 
     useEffect(() => {
-        fetchPlacements();
+        fetchStudents();
     }, []);
 
-    const openModal = (placement = null) => {
-        setEditingPlacement(placement);
-        setPlacementImage(placement ? placement.placementImage : null);
-        setPlacementName(placement ? placement.placementName : '');
-        placement ? decodeBase64Image(placement.placementImage, setFile) : setFile(null);
+    const openModal = (student = null) => {
+        setEditingStudent(student);
+        setStudentName(student ? student.studentName : '');
+        setWherePlaced(student ? student.wherePlaced : '');
+        setStudentImage(student ? student.studentImage : null);
+        student ? decodeBase64Image(student.studentImage, setFile) : setFile(null);
         setIsModalOpen(true);
 
     };
@@ -103,13 +105,13 @@ const Placement = () => {
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setEditingPlacement(null);
+        setEditingStudent(null);
     };
 
 
     const handleUploadClick = async () => {
         setIsLoading(true);
-        if ( !file) {
+        if (!studentName || !wherePlaced ||  !file) {
             setIsLoading(false);
             return toast.warn('Please fill out all required fields.');
         }
@@ -118,26 +120,27 @@ const Placement = () => {
         const reader = new FileReader();
         reader.onloadend = async () => {
             const data = {
-                placementImage: file ? reader.result : null,
-                placementName,
+                studentName,
+                wherePlaced,
+                studentImage: file ? reader.result : null,
                 userId
             };
 
             try {
-                const endpoint = editingPlacement
-                    ? `${API_BASE_URL}/placements/updatePlacement/${editingPlacement._id}`
-                    : `${API_BASE_URL}/placements/addPlacement`;
+                const endpoint = editingStudent
+                    ? `${API_BASE_URL}/studentsPlaced/updateStudentPlaced/${editingStudent._id}`
+                    : `${API_BASE_URL}/studentsPlaced/addStudentPlaced`;
 
                 await axios.post(endpoint, data, {
                     headers: { 'Content-Type': 'application/json' },
                 });
-                toast.success(editingPlacement ? 'Placement Partner updated successfully!' : 'Placement Partner added successfully!');
-                fetchPlacements();
+                toast.success(editingStudent ? 'Student updated successfully!' : 'Student added successfully!');
+                fetchStudents();
                 setIsLoading(false);
                 closeModal();
             } catch (error) {
-                console.error('Error uploading placement partner:', error);
-                toast.error('Failed to upload placement partner.');
+                console.error('Error uploading student:', error);
+                toast.error('Failed to upload student.');
             } finally {
                 setUploading(false);
             }
@@ -151,16 +154,16 @@ const Placement = () => {
     };
 
     const handleDeleteClick = async (Id) => {
-        if (window.confirm('Are you sure you want to delete this placement partner?')) {
+        if (window.confirm('Are you sure you want to delete this student?')) {
             try {
                 setIsLoading(true);
-                await axios.delete(`${API_BASE_URL}/placements/deletePlacement/${Id}`);
-                toast.success('Placement Partner deleted successfully!');
-                fetchPlacements();
+                await axios.delete(`${API_BASE_URL}/studentsPlaced/deleteStudentPlaced/${Id}`);
+                toast.success('Student deleted successfully!');
+                fetchStudents();
                 setIsLoading(false)
             } catch (error) {
-                console.error('Error deleting placement partner:', error);
-                toast.error('Failed to delete placement partner.');
+                console.error('Error deleting student:', error);
+                toast.error('Failed to delete student.');
             }
         }
     };
@@ -173,13 +176,23 @@ const Placement = () => {
             sortable: true,
         },
         {
-            name: 'Placement PartnerImage',
+            name: 'Name',
+            selector: row => row.studentName,
+            sortable: true,
+        },
+        {
+            name: 'Placed At',
+            selector: row => row.wherePlaced,
+            sortable: true,
+        },
+        {
+            name: 'Image',
             selector: row => (
-                row.placementImage ? (
+                row.studentImage ? (
                     <img
-                        src={row.placementImage}
+                        src={row.studentImage}
                         alt="Image"
-                        className="w-30 h-15 object-cover border-2 border-lightAccent rounded-md shadow-sm"
+                        className="w-10 h-10 object-cover border-2 border-lightAccent rounded-md shadow-sm"
                     />
                 ) : (
                     <div>No Image</div>
@@ -238,6 +251,11 @@ const Placement = () => {
         },
     };
 
+    const filteredStudents = students.filter(student =>
+        student.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.wherePlaced.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     const handleDragEnter = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -273,40 +291,61 @@ const Placement = () => {
             :
                 <div className="p-6 bg-cardBg card-shadow rounded-lg">
                     <div className="flex justify-between items-center mb-4">
-                       <h3 className="text-xl font-bold text-accent">All Placement Partners</h3>
+                        <div className="flex items-center border-2 px-3 py-2 rounded-lg">
+                            <label htmlFor="search-student"><SearchIcon width={18} height={18} fill={"none"} /></label>
+                            <input id='search-student' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="ms-2 w-full sm:w-60 bg-transparent text-sm p-0 focus:outline-0" type="text" placeholder="Search by name" />
+                        </div>
+
                         <button onClick={() => openModal()} className="bg-accent hover:bg-accent/70 px-3 py-2 h-full text-sm font-semibold text-cardBg rounded-lg">
-                            Add Placement Partner
+                            Add Student
                         </button>
                     </div>
 
                     <Modal
                         isOpen={isModalOpen}
                         onRequestClose={closeModal}
-                        contentLabel="Placement Modal"
+                        contentLabel="Student Modal"
                         className="w-full max-w-[500px] max-h-[96vh] overflow-auto bg-cardBg z-50 m-4 p-6 rounded-2xl flex flex-col gap-4"
                         overlayClassName="overlay"
                     >
                         <h2 className="text-xl font-bold text-accent">
-                            {editingPlacement ? 'Edit Placement Partner' : 'Add Placement Partner'}
+                            {editingStudent ? 'Edit Student' : 'Add Student'}
                         </h2>
 
                         <div className="flex-1 overflow-auto">
-                        <div className="flex flex-col gap-1">
-                                <label htmlFor="username" className="block text-md font-semibold required">
-                                    Placement Partner Name
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="studentName" className="block text-md font-semibold required">
+                                    Student Name
                                 </label>
                                 <input
-                                    id="mentorName"
+                                    id="studentName"
                                     type="text"
-                                    value={placementName}
-                                    placeholder="Enter Placement Partner Name"
-                                    onChange={(e) => setPlacementName(e.target.value)}
+                                    value={studentName}
+                                    placeholder="Enter Student Name"
+                                    onChange={(e) => setStudentName(e.target.value)}
                                     className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
                                 />
                             </div>
+
                             <div className="flex flex-col gap-1">
-                                <label htmlFor="placementImage" className="block text-md font-semibold required">
-                                Placement Partner Image
+                                <label htmlFor="wherePlaced" className="block text-md font-semibold required">
+                                Where Placed ?
+                                </label>
+                                <input
+                                    id="wherePlaced"
+                                    type="text"
+                                    value={wherePlaced}
+                                    placeholder="Enter Where Placed"
+                                    onChange={(e) => setWherePlaced(e.target.value)}
+                                    className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
+                                />
+                            </div>
+
+                            
+
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="studentImage" className="block text-md font-semibold required">
+                                    Student Image
                                 </label>
                                 <div
                                     className={`upload-box w-full border-2 border-dashed rounded-lg flex justify-center items-center bg-mainBg ${dragging ? 'dragging' : ''}`}
@@ -357,12 +396,12 @@ const Placement = () => {
                                 disabled={uploading}
                                 className={`px-6 py-2 rounded-lg text-cardBg text-md font-medium ${uploading
                                     ? 'bg-gray-400 cursor-not-allowed'
-                                    : editingPlacement
+                                    : editingStudent
                                         ? 'bg-green-600 hover:bg-green-700'
                                         : 'bg-green-600 hover:bg-green-700'
                                     }`}
                             >
-                                {uploading ? 'Uploading...' : editingPlacement ? 'Update Placement Partner' : 'Add Placement Partner'}
+                                {uploading ? 'Uploading...' : editingStudent ? 'Update Student' : 'Add Student'}
                             </button>
                             <button onClick={closeModal} className="px-6 py-2 rounded-lg font-medium text-md text-cardBg bg-dangerRed duration-300">
                                 Cancel
@@ -373,7 +412,7 @@ const Placement = () => {
                     <div className="overflow-hidden border-2 rounded-lg">
                         <DataTable
                             columns={columns}
-                            data={placements}
+                            data={filteredStudents}
                             pagination
                             highlightOnHover
                             // pointerOnHover
@@ -390,4 +429,4 @@ const Placement = () => {
 };
 
 Modal.setAppElement('#root');
-export default Placement;
+export default StudentsPlaced;

@@ -27,17 +27,14 @@ const Testimonial = () => {
     const [uploading, setUploading] = useState(false);
     const [dragging, setDragging] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [mainServices, setMainServices] = useState([]);
-    const [selectedMainServices, setSelectedMainServices] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [selectedCourses, setSelectedCourses] = useState([]);
     const { userRoles } = useRoles();
     const { userId } = useRoles();
     const {users} = useRoles();
-    const actionRoles = userRoles?.find(role => role.name === "Testimonial")
+    const actionRoles = userRoles?.find(role => role.name === "Users")
     const [isLoading, setIsLoading] = useState(true);
-    const [subServices, setSubServices] = useState([]);
-    const [selectedSubServices, setSelectedSubServices] = useState([]);
-    const [isServiceLoading,setIsServiceLoading] = useState(true);
-    const [isSubServiceLoading,setIsSubServiceLoading] = useState(true);
+    const [isCourseLoading,setIsCourseLoading] = useState(true);
 
 
     const handleDragEnter = (e) => {
@@ -65,31 +62,16 @@ const Testimonial = () => {
         setFile(e.target.files[0]);
     };
 
-    const fetchServices = async () => {
+    const fetchCourses = async () => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/services/getServicesFrontend`);
-            setMainServices(response.data.services
-                .filter(service => service.serviceEnabled)
-                .map(service => ({ value: service._id, label: service.serviceName })));
-                setIsServiceLoading(false);
+            const response = await axios.get(`${API_BASE_URL}/courses/getCourses`);
+            setCourses(response.data.courses
+                .filter(course => course.courseEnabled)
+                .map(course => ({ value: course._id, label: course.courseName })));
+                setIsCourseLoading(false);
         } catch (error) {
-            console.error('Error fetching services:', error);
-            toast.error('Failed to fetch services.');
-        } finally {
-            //setLoadingServices(false);
-        }
-    };
-
-    const fetchSubServices = async () => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/subServices/getSubServicesFrontend`);
-            setSubServices(response.data.subServices
-                .filter(subService => subService.subServiceEnabled)
-                .map(subService => ({ value: subService._id, label: subService.subServiceName })));
-                setIsSubServiceLoading(false);
-        } catch (error) {
-            console.error('Error fetching sub services:', error);
-            toast.error('Failed to fetch sub services.');
+            console.error('Error fetching courses:', error);
+            toast.error('Failed to fetch courses.');
         } finally {
             //setLoadingServices(false);
         }
@@ -107,28 +89,26 @@ const Testimonial = () => {
             }
         };
         fetchTestimonials();
-        fetchServices();
-        fetchSubServices();
+        fetchCourses();
     }, []);
 
     const openModal = (testimonial = null) => {
         setEditingTestimonial(testimonial);
         setName(testimonial ? testimonial.name : '');
         setDescription(testimonial ? testimonial.description : '');
-        setSelectedMainServices(testimonial ? filterServices(mainServices, testimonial.serviceId) : []);
-        setSelectedSubServices(testimonial ? filterServices(subServices, testimonial.serviceId) : []);
+        setSelectedCourses(testimonial ? filterCourses(courses, testimonial.courseId) : []);
         setShowForAll(testimonial ? testimonial.showForAll : true);
         setImage(testimonial ? testimonial.image : null);
         testimonial ? decodeBase64Image(testimonial.image, setFile) : setFile(null);
         setIsModalOpen(true);
     };
 
-    const filterServices = (services = [], serviceIdList = []) => {
-        if (!Array.isArray(services) || !Array.isArray(serviceIdList)) {
-            console.error("Invalid input: services or serviceIdList is not an array");
+    const filterCourses = (courses = [], courseIdList = []) => {
+        if (!Array.isArray(courses) || !Array.isArray(courseIdList)) {
+            console.error("Invalid input: courses or courseIdList is not an array");
             return [];
         }
-        return services.filter(service => serviceIdList.includes(service.value));
+        return courses.filter(course => courseIdList.includes(course.value));
     };
 
 
@@ -193,15 +173,15 @@ const Testimonial = () => {
 
     const handleUploadClick = async () => {
         setIsLoading(true);
-        const serviceId = showForAll ? [] : [...selectedMainServices.map(option => option.value), ...selectedSubServices.map(option => option.value)]
+        const courseId = showForAll ? [] : selectedCourses.map(option => option.value)
         if (!name || !description || !file) {
             setIsLoading(false);
             return toast.warn('Please fill out all required fields or required images.');
         }
 
-        if(!showForAll && (serviceId.length ==0)){
+        if(!showForAll && (courseId.length ==0)){
             setIsLoading(false);
-            return toast.warn('Please Select At Least One Service or Sub Service');
+            return toast.warn('Please Select At Least One Course');
         }
 
         setUploading(true);
@@ -211,7 +191,7 @@ const Testimonial = () => {
                 name,
                 description,
                 imageBase64: reader.result,
-                serviceId,
+                courseId,
                 showForAll,
                 userId
             };
@@ -227,8 +207,7 @@ const Testimonial = () => {
                 setDescription('');
                 setImage(null);
                 setFile(null);
-                setSelectedMainServices([]);
-                setSelectedSubServices([]);
+                setSelectedCourses([]);
                 setShowForAll(false);
                 setEditingTestimonial(null);
                 const fetchResponse = await axios.get(`${API_BASE_URL}/testimonials/getTestimonials`);
@@ -356,7 +335,7 @@ const Testimonial = () => {
     return (
         <>
         {actionRoles?.actions?.permission ?
-        isLoading || isServiceLoading || isSubServiceLoading ?
+        isLoading || isCourseLoading  ?
         <div className='w-full h-100 flex justify-center items-center bg-cardBg card-shadow rounded-lg'>
                <i className="loader" />
            </div>
@@ -425,32 +404,16 @@ const Testimonial = () => {
                 </label>
 
                 {showForAll ? null:<div className="flex flex-col gap-1">
-                    <label htmlFor="mainserviceId" className="block text-sm font-semibold required">
-                        Select Services
+                    <label htmlFor="maincourseId" className="block text-sm font-semibold required">
+                        Select Courses
                     </label>
                     <Select
                         isMulti
-                        name="services"
-                        placeholder="Select Services"
-                        options={mainServices}
-                        value={selectedMainServices}
-                        onChange={(selected) => setSelectedMainServices(selected)}
-                        className="basic-multi-select text-md"
-                        classNamePrefix="select"
-                    />
-                </div>}
-
-                {showForAll ? null:<div className="flex flex-col gap-1">
-                    <label htmlFor="mainserviceId" className="block text-sm font-semibold">
-                        Select Sub Services
-                    </label>
-                    <Select
-                        isMulti
-                        name="subServices"
-                        placeholder="Select Sub Services"
-                        options={subServices}
-                        value={selectedSubServices}
-                        onChange={(selected) => setSelectedSubServices(selected)}
+                        name="courses"
+                        placeholder="Select Courses"
+                        options={courses}
+                        value={selectedCourses}
+                        onChange={(selected) => setSelectedCourses(selected)}
                         className="basic-multi-select text-md"
                         classNamePrefix="select"
                     />

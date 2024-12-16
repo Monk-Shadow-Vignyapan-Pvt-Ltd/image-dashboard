@@ -133,6 +133,15 @@ const Sidebar = (props) => {
                                 {userRoles?.find(role => role.name === "Users")?.actions?.permission ?
                                     <MenuComponent to={'/demo-master'} name={"Demo Master"} icon={<MenuSectionIcon />} isActive={false} /> : null}
 
+                                {userRoles?.find(role => role.name === "Users")?.actions?.permission ?
+                                    <MenuComponent to={'/testimonial'} name={"Testimonials"} icon={<MenuSectionIcon />} isActive={false} /> : null}
+
+                                {userRoles?.find(role => role.name === "Users")?.actions?.permission ?
+                                    <MenuComponent to={'/blog'} name={"Blogs"} icon={<MenuSectionIcon />} isActive={false} /> : null}
+                                
+                                {userRoles?.find(role => role.name === "Users")?.actions?.permission ?
+                                    <MenuComponent to={'/student-placed'} name={"Students Placed"} icon={<MenuSectionIcon />} isActive={false} /> : null}
+
                                 {/* {userRoles?.find(role => role.name === "Survey")?.actions?.permission ?
                                     <div className="flex flex-col">
                                         <li className="mb-2">

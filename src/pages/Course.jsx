@@ -41,8 +41,8 @@ const Course = () => {
     const fetchCourses = async () => {
         try {
             if(isFromAddCourse){
-                setCourses(location.state?.courses)
-                setParentCourses(location.state?.parentCourses);
+            setCourses(location.state?.courses)
+            setParentCourses(location.state?.parentCourses);
             setFilteredCourses(location.state?.courses); 
             setIsParentCoursesLoading(false);
             setIsLoading(false);

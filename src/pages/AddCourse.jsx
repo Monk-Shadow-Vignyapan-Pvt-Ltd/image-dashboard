@@ -45,6 +45,11 @@ const AddCourse = () => {
   const [IsMentorLoading,setIsMentorLoading] = useState(true);
   const [mentors,setMentors] = useState([]);
   const [mentorsList, setMentorsList] = useState([]);
+  const [difficulty,setDifficulty] = useState("");
+  const [mode,setMode] = useState("");
+  const [assignments,setAssignments] = useState("");
+  const [hiredBy,setHiredBy] = useState("");
+  const [thisCourseIsFor, setThisCourseIsFor] = useState([{ id: 1, description: '' }]);
 
   const fetchSoftwares = async () => {
     try {
@@ -211,11 +216,28 @@ const AddCourse = () => {
     );
   };
 
+  const addNewIsForpoint = () => {
+    setThisCourseIsFor([...thisCourseIsFor, { id: thisCourseIsFor.length + 1, description: '' }]);
+  };
+
+  const removeIsForpoint = (id) => {
+    setThisCourseIsFor((prevIsForpoints) => prevIsForpoints.filter((isFor) => isFor.id !== id));
+  };
+
+  const handleInputIsForChange = (id, field, value) => {
+    setThisCourseIsFor((prevIsForpoints) =>
+      prevIsForpoints.map((isFor) =>
+        isFor.id === id ? { ...isFor, [field]: value } : isFor
+      )
+    );
+  };
+
 
 
   const handleUploadClick = async () => {
     setIsLoading(true);
     const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
+    const filteredIsForpoints = thisCourseIsFor.filter(item => item.description);
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
         const filteredPoints = item.points.filter(point => point.title && point.description);
@@ -229,7 +251,9 @@ const AddCourse = () => {
       // If the item does not match any of the criteria, return the item unchanged.
       return null; // You can return `null` to exclude or just `item` to keep it.
     }).filter(item => item !== null);
-    if (!courseName || !description || !file || !selectedParentCourse.id || !duration || softwares.length === 0 || mentors.length === 0 || !nextBatchStartDate || !avgCtc || filteredModulepoints.length === 0) {
+    if (!courseName || !description || !file || !selectedParentCourse.id || !duration || softwares.length === 0 
+      || mentors.length === 0 || !nextBatchStartDate || !avgCtc || filteredModulepoints.length === 0 
+      || filteredIsForpoints.length === 0 || !difficulty || !mode || !assignments || !hiredBy) {
       setIsLoading(false);
       return toast.warn('Please fill out all required fields or required images.');
     }
@@ -242,6 +266,11 @@ const AddCourse = () => {
         thumbnail: reader.result,
         duration: duration,
         nextBatchStartDate: nextBatchStartDate,
+        difficulty:difficulty,
+        mode:mode,
+        assignments:assignments,
+        hiredBy:hiredBy,
+        thisCourseIsFor:filteredIsForpoints,
         softwares:softwares.map(option => option.value),
         mentors:mentors.map(option => option.value),
         avgCtc:avgCtc,
@@ -536,6 +565,130 @@ const AddCourse = () => {
                 </label>
               </div>
 
+              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 ">
+                <label className="text-md font-semibold required" htmlFor="parentCourse">Difficulty</label>
+                <Listbox value={difficulty} onChange={setDifficulty}>
+                  <div className="relative">
+                    <ListboxButton
+                      id="duration"
+                      className="relative w-full cursor-default font-input-style text-sm rounded-lg px-3 py-1.5 bg-mainBg placeholder:text-secondaryText focus:ring-1 focus:outline-accent focus:ring-accent"
+                    >
+                      <span className="flex items-center h-5">
+                        {difficulty || 'Select Difficulty'}
+                      </span>
+                    </ListboxButton>
+
+                    <ListboxOptions className="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-lg bg-white py-2 px-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <ListboxOption
+                          
+                          value="Beginner"
+                          className="group relative cursor-default select-none text-sm rounded-md py-2 px-2 text-gray-900 data-[focus]:bg-lightRed data-[focus]:text-white"
+                        >
+                          Beginner
+                        </ListboxOption>
+                        <ListboxOption
+                          
+                          value="Intermediate"
+                          className="group relative cursor-default select-none text-sm rounded-md py-2 px-2 text-gray-900 data-[focus]:bg-lightRed data-[focus]:text-white"
+                        >
+                          Intermediate
+                        </ListboxOption>
+                        <ListboxOption
+                          
+                          value="Advanced"
+                          className="group relative cursor-default select-none text-sm rounded-md py-2 px-2 text-gray-900 data-[focus]:bg-lightRed data-[focus]:text-white"
+                        >
+                          Advanced
+                        </ListboxOption>
+                    </ListboxOptions>
+                  </div>
+                </Listbox>
+              </div>
+
+              <div className="flex flex-col gap-2 col-span-12 md:col-span-6">
+                <label className="text-md font-semibold required" htmlFor="parentCourse">Course Mode</label>
+                <Listbox value={mode} onChange={setMode}>
+                  <div className="relative">
+                    <ListboxButton
+                      id="duration"
+                      className="relative w-full cursor-default font-input-style text-sm rounded-lg px-3 py-1.5 bg-mainBg placeholder:text-secondaryText focus:ring-1 focus:outline-accent focus:ring-accent"
+                    >
+                      <span className="flex items-center h-5">
+                        {mode || 'Select Course Mode'}
+                      </span>
+                    </ListboxButton>
+
+                    <ListboxOptions className="absolute z-10 mt-1 w-full max-h-56 overflow-auto rounded-lg bg-white py-2 px-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <ListboxOption
+                          value="Online"
+                          className="group relative cursor-default select-none text-sm rounded-md py-2 px-2 text-gray-900 data-[focus]:bg-lightRed data-[focus]:text-white"
+                        >
+                          Online
+                        </ListboxOption>
+                        <ListboxOption
+                          value="Offline"
+                          className="group relative cursor-default select-none text-sm rounded-md py-2 px-2 text-gray-900 data-[focus]:bg-lightRed data-[focus]:text-white"
+                        >
+                          Offline
+                        </ListboxOption>
+                    </ListboxOptions>
+                  </div>
+                </Listbox>
+              </div>
+
+              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                <label className="gap-2 text-md font-semibold required" htmlFor="courseName" >Assignments</label>
+                <input id="assignments" value={assignments}
+                  onChange={(e) => setAssignments(e.target.value)}
+                  className="font-input-style text-sm min-w-0 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText"
+                  type="text"
+                  placeholder="Enter your Assignments" />
+              </div>
+
+              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                <label className="gap-2 text-md font-semibold required" htmlFor="courseName" >Hired By</label>
+                <input id="hiredBy" value={hiredBy}
+                  onChange={(e) => setHiredBy(e.target.value)}
+                  className="font-input-style text-sm min-w-0 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText"
+                  type="text"
+                  placeholder="Enter your Hired By Agencies" />
+              </div>
+            </div>
+
+            <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
+              <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
+                <span className="text-lg font-bold text-accent required">This Course is For</span>
+              </div>
+
+              <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-1">
+                <div className="w-full grid grid-cols-12 gap-x-3 gap-y-4">
+                </div>
+
+                <div className="point-list-style w-full gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {thisCourseIsFor.map((idFor) => (
+                    <div key={idFor.id} className="flex flex-col relative gap-3 p-3 border-2 rounded-lg">
+                      <button onClick={() => removeIsForpoint(idFor.id)} className="absolute top-2 right-2">
+                        <FaPlus className="rotate-45" size={18} fill={"#f05f23"} />
+                      </button>
+                      <div className="w-full flex flex-col gap-1.5 ">
+    
+                        <textarea
+                          id={`PointDescription-${idFor.id}`}
+                          className="font-input-style text-sm min-h-20 min-w-0 flex-1 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText"
+                          placeholder="Enter Point Description"
+                          value={idFor.description}
+                          onChange={(e) => handleInputIsForChange(idFor.id, 'description', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <div onClick={addNewIsForpoint} className="flex relative gap-2 items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer">
+                    <FaPlus size={18} fill={"#f05f23"} />
+                    <span className="text-accent font-semibold">Add New Point</span>
+                  </div>
+                </div>
+
+              </div>
             </div>
 
 
@@ -545,7 +698,7 @@ const AddCourse = () => {
                 <span className="text-lg font-bold text-accent required">Modules Of {courseName}?</span>
               </div>
 
-              <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-3">
+              <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-1">
                 <div className="w-full grid grid-cols-12 gap-x-3 gap-y-4">
                 </div>
 

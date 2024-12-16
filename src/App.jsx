@@ -22,6 +22,8 @@ import Course from './pages/Course';
 import AddCourse from './pages/AddCourse';
 import EditCourse from './pages/EditCourse';
 import DemoMaster from './pages/DemoMaster';
+import Blog from './pages/Blog';
+import StudentsPlaced from './pages/studentsPlaced';
 
 
 function App() {
@@ -56,6 +58,9 @@ function App() {
         { path: '/add-course',element: <AddCourse />,},
         { path: '/edit-course/:courseId', element: <EditCourse /> },
         { path: '/demo-master', element: <DemoMaster /> },
+        { path: '/testimonial', element: <Testimonial /> },
+        { path: '/blog', element: <Blog /> },
+        { path: '/student-placed', element: <StudentsPlaced /> },
       ],
     },
     {

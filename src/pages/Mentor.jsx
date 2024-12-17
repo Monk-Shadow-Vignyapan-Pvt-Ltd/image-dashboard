@@ -33,6 +33,7 @@ const Mentor = () => {
     const { userId } = useRoles();
     const {users} = useRoles();
     const [isLoading, setIsLoading] = useState(true);
+    const [mentorDescription, setMentorDescription] = useState('');
 
     const fetchMentors = async () => {
         try {
@@ -53,6 +54,7 @@ const Mentor = () => {
         setEditingMentor(mentor);
         setMentorName(mentor ? mentor.mentorName : '');
         setMentorDegree(mentor ? mentor.mentorDegree : '');
+        setMentorDescription(mentor ? mentor.mentorDescription : '');
         setMentorImage(mentor ? mentor.mentorImage : null);
         mentor ? decodeBase64Image(mentor.mentorImage, setFile) : setFile(null);
         setIsModalOpen(true);
@@ -122,6 +124,7 @@ const Mentor = () => {
             const data = {
                 mentorName,
                 mentorDegree,
+                mentorDescription,
                 mentorImage: file ? reader.result : null,
                 userId
             };
@@ -339,6 +342,12 @@ const Mentor = () => {
                                     onChange={(e) => setMentorDegree(e.target.value)}
                                     className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
                                 />
+                            </div>
+
+                            <div className="flex flex-col gap-1">
+                            <label className="gap-2 text-md font-semibold required" htmlFor="description" >Mentor Description</label>
+                            <textarea id="mentordescription" value={mentorDescription}
+                            onChange={(e) => setMentorDescription(e.target.value)} className="font-input-style text-sm min-h-40 min-w-0 flex-1 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText" placeholder="Enter Mentor Description" />
                             </div>
 
                             

@@ -173,7 +173,7 @@ const Placement = () => {
             sortable: true,
         },
         {
-            name: 'Placement PartnerImage',
+            name: 'Placement Partner Image',
             selector: row => (
                 row.placementImage ? (
                     <img

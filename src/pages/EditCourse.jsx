@@ -13,7 +13,8 @@ import AccessDenied from '../components/AccessDenied.jsx';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import Select from 'react-select'
+import Select from 'react-select';
+import Modal from 'react-modal';
 
 
 const EditCourse = () => {
@@ -429,6 +430,227 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
     }
   };
 
+  const [parentCourseName, setParentCourseName] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const openModal = (parentCourse = null) => {
+    setParentCourseName('');
+    setIsModalOpen(true);
+
+};
+
+const closeModal = () => {
+    setIsModalOpen(false);
+};
+
+const handleUploadParentCourseClick = async () => {
+  setIsLoading(true);
+  if (!parentCourseName ) {
+      setIsLoading(false);
+      return toast.warn('Please fill out all required fields.');
+  }
+
+  setUploading(true);
+      const data = {
+          parentCourseName,
+          userId
+      };
+
+      try {
+          const endpoint = `${API_BASE_URL}/parentCourses/addParentCourse`;
+
+          const response = await axios.post(endpoint, data, {
+              headers: { 'Content-Type': 'application/json' },
+          });
+          toast.success('Parent Course added successfully!');
+
+          setParentCourses([...parentCourses, response?.data.parentCourse]);
+          setIsLoading(false);
+          closeModal();
+      } catch (error) {
+          console.error('Error uploading Parent Course:', error);
+          toast.error('Failed to upload Parent Course.');
+      } finally {
+          setUploading(false);
+      }
+ 
+};
+
+ const [softwareName, setSoftwareName] = useState('');
+ const [softwareDescription, setSoftwareDescription] = useState('');
+ const [softwarefile, setSoftwarefile] = useState(null);
+ const [softwaredragging, setSoftwareDragging] = useState(false);
+ const [isSoftwareModalOpen, setIsSoftwareModalOpen] = useState(false);
+
+ const handleSoftwareDragEnter = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  setSoftwareDragging(true);
+};
+
+const handleSoftwareDragLeave = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  setSoftwareDragging(false);
+};
+
+const handleSoftwareDrop = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  setSoftwareDragging(false);
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    setSoftwarefile(e.dataTransfer.files[0]);
+  }
+};
+
+const handleSoftwareFileChange = (e) => {
+  setSoftwarefile(e.target.files[0]);
+};
+
+const openSoftwareModal = (software = null) => {
+  setSoftwareName('');
+  setSoftwareDescription('');
+  setSoftwarefile(null);
+  setIsSoftwareModalOpen(true);
+
+};
+
+const closeSoftwareModal = () => {
+  setIsSoftwareModalOpen(false);
+};
+
+
+const handleSoftwareUploadClick = async () => {
+  setIsLoading(true);
+  if (!softwareName ||  !softwarefile) {
+      setIsLoading(false);
+      return toast.warn('Please fill out all required fields.');
+  }
+
+  setUploading(true);
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+      const data = {
+          softwareName,
+          softwareDescription,
+          softwareImage: softwarefile ? reader.result : null,
+          userId
+      };
+
+      try {
+          const endpoint = `${API_BASE_URL}/softwares/addSoftware`;
+
+          await axios.post(endpoint, data, {
+              headers: { 'Content-Type': 'application/json' },
+          });
+          toast.success('Software added successfully!');
+          fetchSoftwares();
+          setIsLoading(false);
+          closeSoftwareModal();
+      } catch (error) {
+          console.error('Error uploading software:', error);
+          toast.error('Failed to upload software.');
+      } finally {
+          setUploading(false);
+      }
+  };
+
+  if (softwarefile) {
+      reader.readAsDataURL(softwarefile);
+  } else {
+      reader.onloadend();
+  }
+};
+
+  const [mentorName, setMentorName] = useState('');
+  const [mentorDegree, setMentorDegree] = useState('');
+  const [mentorfile, setMentorfile] = useState(null);
+   const [mentorDescription, setMentorDescription] = useState('');
+  const [mentorDragging, setMentorDragging] = useState(false);
+  const [isMentorModalOpen, setIsMentorModalOpen] = useState(false);
+
+  const handleMentorDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMentorDragging(true);
+  };
+  
+  const handleMentorDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMentorDragging(false);
+  };
+  
+  const handleMentorDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMentorDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setMentorfile(e.dataTransfer.files[0]);
+    }
+  };
+  
+  const handleMentorFileChange = (e) => {
+    setMentorfile(e.target.files[0]);
+  };
+  
+  const openMentorModal = (mentor = null) => {
+    setMentorName('');
+    setMentorDegree('');
+    setMentorDescription("");
+    setMentorfile(null);
+    setIsMentorModalOpen(true);
+  
+  };
+  
+  const closeMentorModal = () => {
+    setIsMentorModalOpen(false);
+  };
+
+  const handleMentorUploadClick = async () => {
+    setIsLoading(true);
+    if (!mentorName || !mentorDegree ||  !mentorfile) {
+        setIsLoading(false);
+        return toast.warn('Please fill out all required fields.');
+    }
+
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+        const data = {
+            mentorName,
+            mentorDegree,
+            mentorDescription,
+            mentorImage: mentorfile ? reader.result : null,
+            userId
+        };
+
+        try {
+            const endpoint = `${API_BASE_URL}/mentors/addMentor`;
+
+            await axios.post(endpoint, data, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            toast.success('Mentor added successfully!');
+            fetchMentors();
+            setIsLoading(false);
+            closeMentorModal();
+        } catch (error) {
+            console.error('Error uploading mentor:', error);
+            toast.error('Failed to upload mentor.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    if (mentorfile) {
+        reader.readAsDataURL(mentorfile);
+    } else {
+        reader.onloadend();
+    }
+};
+
 
 
   return (
@@ -445,7 +667,8 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
             <div className="grid grid-cols-12 items-center justify-between gap-x-3 gap-y-4">
               <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                 <label className="text-md font-semibold required" htmlFor="parentCourse">Select Parent Course</label>
-                <Listbox value={selectedParentCourse} onChange={setSelectedParentCourse}>
+                <div className="flex items-center gap-2">
+                <Listbox value={selectedParentCourse} onChange={setSelectedParentCourse} className="flex-grow">
                   <div className="relative">
                     <ListboxButton
                       id="parentCourse"
@@ -469,6 +692,10 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
                     </ListboxOptions>
                   </div>
                 </Listbox>
+                 <button onClick={() => openModal()} className="flex items-center justify-center p-2 rounded-lg bg-mainBg hover:bg-lightGray">
+                                    <FaPlus size={18} fill="#f05f23" />
+                                  </button>
+                 </div>                 
               </div>
 
 
@@ -582,6 +809,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
                 <label htmlFor="softwares" className="block text-sm font-semibold required">
                   Select Softwares
                 </label>
+                <div className="flex items-center gap-2">
                 <Select
                   isMulti
                   name="softwaresList"
@@ -589,15 +817,20 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
                   options={softwaresList}
                   value={softwares}
                   onChange={(selected) => setSoftwares(selected)}
-                  className="basic-multi-select text-md"
+                  className="basic-multi-select text-md w-100"
                   classNamePrefix="select"
                 />
+                 <button onClick={() => openSoftwareModal()} className="flex items-center justify-center p-2 rounded-lg bg-mainBg hover:bg-lightGray">
+                                    <FaPlus size={18} fill="#f05f23" />
+                                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                 <label htmlFor="mentors" className="block text-sm font-semibold required">
                   Select Mentors
                 </label>
+                <div className="flex items-center gap-2">
                 <Select
                   isMulti
                   name="mentorsList"
@@ -605,9 +838,13 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
                   options={mentorsList}
                   value={mentors}
                   onChange={(selected) => setMentors(selected)}
-                  className="basic-multi-select text-md"
+                  className="basic-multi-select text-md w-100"
                   classNamePrefix="select"
                 />
+                <button onClick={() => openMentorModal()} className="flex items-center justify-center p-2 rounded-lg bg-mainBg hover:bg-lightGray">
+                                    <FaPlus size={18} fill="#f05f23" />
+                </button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
@@ -956,7 +1193,267 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
 
 
             <button onClick={handleUploadClick} className="bg-accent hover:bg-accent/70 px-6 py-1.5 w-fit text-sm font-semibold text-cardBg rounded-lg">Submit</button>
-
+            <Modal
+                                               isOpen={isModalOpen}
+                                               onRequestClose={closeModal}
+                                               contentLabel="Parent Course Modal"
+                                               className="w-full max-w-[500px] max-h-[96vh] overflow-auto bg-cardBg z-50 m-4 p-6 rounded-2xl flex flex-col gap-4"
+                                               overlayClassName="overlay"
+                                           >
+                                               <h2 className="text-xl font-bold text-accent">
+                                                   Add Parent Course
+                                               </h2>
+                       
+                                               <div className="flex-1 overflow-auto">
+                                                   <div className="flex flex-col gap-1">
+                                                       <label htmlFor="username" className="block text-md font-semibold required">
+                                                       Parent Course Name
+                                                       </label>
+                                                       <input
+                                                           id="parentCourseOption"
+                                                           type="text"
+                                                           value={parentCourseName}
+                                                           placeholder="Enter Parent Course Name"
+                                                           onChange={(e) => setParentCourseName(e.target.value)}
+                                                           className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
+                                                       />
+                                                   </div>
+                                               </div>
+                       
+                                               <div className="grid grid-cols-2 gap-4 w-full sticky bottom-0 z-10">
+                                                   <button
+                                                       onClick={handleUploadParentCourseClick}
+                                                       disabled={uploading}
+                                                       className={`px-6 py-2 rounded-lg text-cardBg text-md font-medium ${uploading
+                                                           ? 'bg-gray-400 cursor-not-allowed'
+                                                           : 'bg-green-600 hover:bg-green-700'
+                                                           }`}
+                                                   >
+                                                       {uploading ? 'Uploading...' :'Add Parent Course'}
+                                                   </button>
+                                                   <button onClick={closeModal} className="px-6 py-2 rounded-lg font-medium text-md text-cardBg bg-dangerRed duration-300">
+                                                       Cancel
+                                                   </button>
+                                               </div>
+                                           </Modal>
+                        
+                        <Modal
+                                                isOpen={isSoftwareModalOpen}
+                                                onRequestClose={closeSoftwareModal}
+                                                contentLabel="Software Modal"
+                                                className="w-full max-w-[500px] max-h-[96vh] overflow-auto bg-cardBg z-50 m-4 p-6 rounded-2xl flex flex-col gap-4"
+                                                overlayClassName="overlay"
+                                            >
+                                                <h2 className="text-xl font-bold text-accent">
+                                                   'Add Software'
+                                                </h2>
+                        
+                                                <div className="flex-1 overflow-auto">
+                                                    <div className="flex flex-col gap-1">
+                                                        <label htmlFor="username" className="block text-md font-semibold required">
+                                                            Software Name
+                                                        </label>
+                                                        <input
+                                                            id="softwareName"
+                                                            type="text"
+                                                            value={softwareName}
+                                                            placeholder="Enter Software Name"
+                                                            onChange={(e) => setSoftwareName(e.target.value)}
+                                                            className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
+                                                        />
+                                                    </div>
+                        
+                                                    <div className="flex flex-col gap-1">
+                                                        <label htmlFor="username" className="block text-md font-semibold">
+                                                            Software Description
+                                                        </label>
+                                                        <textarea
+                                                            id="softwareDescription"
+                                                            type="text"
+                                                            value={softwareDescription}
+                                                            placeholder="Enter Software Description"
+                                                            onChange={(e) => setSoftwareDescription(e.target.value)}
+                                                            className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
+                                                        />
+                                                    </div>
+                        
+                                                    
+                        
+                                                    <div className="flex flex-col gap-1">
+                                                        <label htmlFor="testimonialImage" className="block text-md font-semibold required">
+                                                            Software Image
+                                                        </label>
+                                                        <div
+                                                            className={`upload-box w-full border-2 border-dashed rounded-lg flex justify-center items-center bg-mainBg ${softwaredragging ? 'dragging' : ''}`}
+                                                            onDragEnter={handleSoftwareDragEnter}
+                                                            onDragLeave={handleSoftwareDragLeave}
+                                                            onDragOver={(e) => e.preventDefault()}
+                                                            onDrop={handleSoftwareDrop}
+                                                        >
+                                                            {softwarefile ? (
+                                                                <div className="relative w-full">
+                                                                    <button
+                                                                        className="absolute top-3 right-3 bg-red-500 text-white text-xs icon-lg flex items-center justify-center rounded-full shadow-lg hover:bg-red-600"
+                                                                        onClick={() => setSoftwarefile(null)} // Clear the file on click
+                                                                    >
+                                                                        <FaPlus className="rotate-45 text-mainBg" size={18} />
+                                                                    </button>
+                                                                    <img
+                                                                        src={URL.createObjectURL(softwarefile)}
+                                                                        alt="Preview"
+                                                                        className="max-h-[500px] w-full object-cover object-top rounded-lg"
+                                                                    />
+                                                                    <span className="absolute bottom-0 rounded-b-lg w-full bg-gradient-to-t from-accent to-accent/0 text-cardBg text-center px-2 pt-4 pb-2">{softwarefile.name}</span>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="upload-prompt h-65 flex flex-col items-center justify-center text-secondaryText">
+                                                                    <UploadIcon width={24} height={24} fill={'none'} />
+                                                                    <div className="flex flex-col items-center mt-2">
+                                                                        <span className="text-md text-secondaryText">Drag and drop</span>
+                                                                        <span className="text-md text-secondaryText font-semibold">or</span>
+                                                                        <label className="text-md text-accent font-semibold">
+                                                                            Browse Image
+                                                                            <input
+                                                                                type="file"
+                                                                                onChange={handleSoftwareFileChange}
+                                                                                style={{ display: 'none' }}
+                                                                            />
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        
+                                                <div className="grid grid-cols-2 gap-4 w-full sticky bottom-0 z-10">
+                                                    <button
+                                                        onClick={handleSoftwareUploadClick}
+                                                        disabled={uploading}
+                                                        className={`px-6 py-2 rounded-lg text-cardBg text-md font-medium ${uploading
+                                                            ? 'bg-gray-400 cursor-not-allowed'
+                                                            : 'bg-green-600 hover:bg-green-700'
+                                                            }`}
+                                                    >
+                                                        {uploading ? 'Uploading...' :'Add Software'}
+                                                    </button>
+                                                    <button onClick={closeSoftwareModal} className="px-6 py-2 rounded-lg font-medium text-md text-cardBg bg-dangerRed duration-300">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </Modal>
+                      
+                      <Modal
+                                              isOpen={isMentorModalOpen}
+                                              onRequestClose={closeMentorModal}
+                                              contentLabel="Mentor Modal"
+                                              className="w-full max-w-[500px] max-h-[96vh] overflow-auto bg-cardBg z-50 m-4 p-6 rounded-2xl flex flex-col gap-4"
+                                              overlayClassName="overlay"
+                                          >
+                                              <h2 className="text-xl font-bold text-accent">
+                                                   'Add Mentor'
+                                              </h2>
+                      
+                                              <div className="flex-1 overflow-auto">
+                                                  <div className="flex flex-col gap-1">
+                                                      <label htmlFor="username" className="block text-md font-semibold required">
+                                                          Mentor Name
+                                                      </label>
+                                                      <input
+                                                          id="mentorName"
+                                                          type="text"
+                                                          value={mentorName}
+                                                          placeholder="Enter Mentor Name"
+                                                          onChange={(e) => setMentorName(e.target.value)}
+                                                          className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
+                                                      />
+                                                  </div>
+                      
+                                                  <div className="flex flex-col gap-1">
+                                                      <label htmlFor="username" className="block text-md font-semibold required">
+                                                      Mentor Degree
+                                                      </label>
+                                                      <input
+                                                          id="mentorDegree"
+                                                          type="text"
+                                                          value={mentorDegree}
+                                                          placeholder="Enter Mentor Degree"
+                                                          onChange={(e) => setMentorDegree(e.target.value)}
+                                                          className="bg-mainBg placeholder:text-secondaryText focus:outline-accent text-sm rounded-lg px-3 py-2 block w-full flatpickr-input"
+                                                      />
+                                                  </div>
+                      
+                                                  <div className="flex flex-col gap-1">
+                                                  <label className="gap-2 text-md font-semibold required" htmlFor="description" >Mentor Description</label>
+                                                  <textarea id="mentordescription" value={mentorDescription}
+                                                  onChange={(e) => setMentorDescription(e.target.value)} className="font-input-style text-sm min-h-40 min-w-0 flex-1 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText" placeholder="Enter Mentor Description" />
+                                                  </div>
+                      
+                                                  
+                      
+                                                  <div className="flex flex-col gap-1">
+                                                      <label htmlFor="mentorImage" className="block text-md font-semibold required">
+                                                          Mentor Image
+                                                      </label>
+                                                      <div
+                                                          className={`upload-box w-full border-2 border-dashed rounded-lg flex justify-center items-center bg-mainBg ${dragging ? 'dragging' : ''}`}
+                                                          onDragEnter={handleMentorDragEnter}
+                                                          onDragLeave={handleMentorDragLeave}
+                                                          onDragOver={(e) => e.preventDefault()}
+                                                          onDrop={handleMentorDrop}
+                                                      >
+                                                          {mentorfile ? (
+                                                              <div className="relative w-full">
+                                                                  <button
+                                                                      className="absolute top-3 right-3 bg-red-500 text-white text-xs icon-lg flex items-center justify-center rounded-full shadow-lg hover:bg-red-600"
+                                                                      onClick={() => setMentorfile(null)} // Clear the file on click
+                                                                  >
+                                                                      <FaPlus className="rotate-45 text-mainBg" size={18} />
+                                                                  </button>
+                                                                  <img
+                                                                      src={URL.createObjectURL(mentorfile)}
+                                                                      alt="Preview"
+                                                                      className="max-h-[500px] w-full object-cover object-top rounded-lg"
+                                                                  />
+                                                                  <span className="absolute bottom-0 rounded-b-lg w-full bg-gradient-to-t from-accent to-accent/0 text-cardBg text-center px-2 pt-4 pb-2">{mentorfile.name}</span>
+                                                              </div>
+                                                          ) : (
+                                                              <div className="upload-prompt h-65 flex flex-col items-center justify-center text-secondaryText">
+                                                                  <UploadIcon width={24} height={24} fill={'none'} />
+                                                                  <div className="flex flex-col items-center mt-2">
+                                                                      <span className="text-md text-secondaryText">Drag and drop</span>
+                                                                      <span className="text-md text-secondaryText font-semibold">or</span>
+                                                                      <label className="text-md text-accent font-semibold">
+                                                                          Browse Image
+                                                                          <input
+                                                                              type="file"
+                                                                              onChange={handleMentorFileChange}
+                                                                              style={{ display: 'none' }}
+                                                                          />
+                                                                      </label>
+                                                                  </div>
+                                                              </div>
+                                                          )}
+                                                      </div>
+                                                  </div>
+                                              </div>
+                      
+                                              <div className="grid grid-cols-2 gap-4 w-full sticky bottom-0 z-10">
+                                                  <button
+                                                      onClick={handleMentorUploadClick}
+                                                      disabled={uploading}
+                                                      className={`px-6 py-2 rounded-lg text-cardBg text-md font-medium ${uploading
+                                                          ? 'bg-gray-400 cursor-not-allowed'
+                                                          : 'bg-green-600 hover:bg-green-700'
+                                                          }`}
+                                                  >
+                                                      {uploading ? 'Uploading...' :'Add Mentor'}
+                                                  </button>
+                                                  <button onClick={closeMentorModal} className="px-6 py-2 rounded-lg font-medium text-md text-cardBg bg-dangerRed duration-300">
+                                                      Cancel
+                                                  </button>
+                                              </div>
+                                          </Modal>
           </div>
         : <AccessDenied />}
       <ToastContainer />

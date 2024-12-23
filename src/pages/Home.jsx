@@ -115,15 +115,15 @@ const Home = () => {
             sortable: true,
         },
         {
-            name: 'Courses',
+            name: 'Subject',
             // selector: row => row.subject,
             selector: row => (
-                <div id={`tooltip-${row.course}`} className="tooltip-wrapper">
-                    {row.course}
+                <div id={`tooltip-${row.subject}`} className="tooltip-wrapper">
+                    {row.subject}
                     <ReactTooltip
-                        anchorId={`tooltip-${row.course}`}
+                        anchorId={`tooltip-${row.subject}`}
                         place="top"
-                        content={row.course}
+                        content={row.subject}
                     />
                 </div>
             ),

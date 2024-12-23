@@ -183,15 +183,15 @@ const ContactFollowUp = () => {
             sortable: true,
         },
         {
-            name: 'Courses',
+            name: 'Subject',
             // selector: row => row.subject,
             selector: row => (
-                <div id={`tooltip-${row.course}`} className="tooltip-wrapper">
-                    {row.course}
+                <div id={`tooltip-${row.subject}`} className="tooltip-wrapper">
+                    {row.subject}
                     <ReactTooltip
-                        anchorId={`tooltip-${row.course}`}
+                        anchorId={`tooltip-${row.subject}`}
                         place="top"
-                        content={row.course}
+                        content={row.subject}
                     />
                 </div>
             ),
@@ -271,7 +271,8 @@ const ContactFollowUp = () => {
         contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         contact.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.courses.toLowerCase().includes(searchQuery.toLowerCase()) 
+        contact.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        contact.message.toLowerCase().includes(searchQuery.toLowerCase()) 
     );
 
     return (

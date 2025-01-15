@@ -184,7 +184,7 @@ const Course = () => {
                                     <img className="w-full min-h-50 max-h-50 rounded-lg border-2" src={course.thumbnail} alt="" />
                                     <div className="flex flex-col gap-1.5">
                                         <span className="text-lg text-accent font-semibold">{course.courseName}</span>
-                                        <span className="text-md">Next Batch Start Date : {new Date(course?.nextBatchStartDate).toDateString()}</span>
+                                        {/* <span className="text-md">Next Batch Start Date : {new Date(course?.nextBatchStartDate).toDateString()}</span> */}
                                         <span className="text-md">{parentCourse?.parentCourseName || 'Parent Course Not Found'}</span>
                                     </div>
                                     <div className="flex items-center gap-6">

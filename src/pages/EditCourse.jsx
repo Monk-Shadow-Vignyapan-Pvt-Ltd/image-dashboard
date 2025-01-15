@@ -41,7 +41,7 @@ const EditCourse = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [softwares, setSoftwares] = useState([]);
   const [softwaresList, setSoftwaresList] = useState([]);
-  const [avgCtc,setAvgCtc] = useState(null);
+  // const [avgCtc,setAvgCtc] = useState(null);
   const [isDemoAvailable,setIsDemoAvailable] = useState(false);
   const [isClubCourse,setIsClubCourse] = useState(false);
   const [courseEnabled,setCourseEnabled] = useState(true);
@@ -51,8 +51,8 @@ const EditCourse = () => {
   const [mentorsList, setMentorsList] = useState([]);
   const [difficulty,setDifficulty] = useState("");
   const [mode,setMode] = useState("");
-  const [assignments,setAssignments] = useState("");
-  const [hiredBy,setHiredBy] = useState("");
+  // const [assignments,setAssignments] = useState("");
+  // const [hiredBy,setHiredBy] = useState("");
   const [thisCourseIsFor, setThisCourseIsFor] = useState([{ id: 1, description: '' }]);
 
   const fetchSoftwares = async () => {
@@ -114,7 +114,7 @@ const EditCourse = () => {
                 value: mentor,
                 label: mentor,
               })));
-            setAvgCtc(course?.avgCtc);
+            // setAvgCtc(course?.avgCtc);
             setIsDemoAvailable(course?.isDemoAvailable);
             setIsClubCourse(course?.isClubCourse);
             setSections(course?.others);
@@ -122,8 +122,8 @@ const EditCourse = () => {
             setIsCourseLoading(false);
             setDifficulty(course?.difficulty);
             setMode(course?.mode);
-            setAssignments(course?.assignments);
-            setHiredBy(course?.hiredBy);
+            // setAssignments(course?.assignments);
+            // setHiredBy(course?.hiredBy);
             setThisCourseIsFor(course?.thisCourseIsFor);
         } else {
             console.error('Course data not found!');
@@ -200,7 +200,8 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
 
 
   const addNewSection = () => {
-    setSections([...sections, { id: sections.length + 1, points: [{ id: 1 }] }]);
+    const maxId = sections.length > 0 ? Math.max(...sections.map(item => item.id)) : 0;
+    setSections([...sections, { id: maxId + 1, points: [{ id: 1 }] }]);
   };
 
   const removeSection = (id) => {
@@ -218,7 +219,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
   const addNewPoint = (sectionId) => {
     setSections(sections.map(section =>
       section.id === sectionId
-        ? { ...section, points: [...section.points, { id: section.points.length + 1 }] }
+        ? { ...section, points: [...section.points, { id: Math.max(...section.points.map(item => item.id)) + 1 }] }
         : section
     ));
   };
@@ -286,7 +287,8 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
   };
 
   const addNewModulepoint = () => {
-    setModulepoints([...modulepoints, { id: modulepoints.length + 1, title: '', description: '' }]);
+    const maxId = Math.max(...modulepoints.map(item => item.id));
+    setModulepoints([...modulepoints, { id: maxId + 1, title: '', description: '' }]);
   };
 
   const removeModulepoint = (id) => {
@@ -302,7 +304,8 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
   };
 
   const addNewIsForpoint = () => {
-    setThisCourseIsFor([...thisCourseIsFor, { id: thisCourseIsFor.length + 1, description: '' }]);
+    const maxId = Math.max(...thisCourseIsFor.map(item => item.id));
+    setThisCourseIsFor([...thisCourseIsFor, { id: maxId + 1, description: '' }]);
   };
 
   const removeIsForpoint = (id) => {
@@ -337,8 +340,8 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
       return null; // You can return `null` to exclude or just `item` to keep it.
     }).filter(item => item !== null);
     if (!courseName || !description || !file || !selectedParentCourse.id || !duration || softwares.length === 0 
-      || mentors.length === 0 || !nextBatchStartDate || !avgCtc || filteredModulepoints.length === 0
-      || filteredIsForpoints.length === 0 || !difficulty || !mode || !assignments || !hiredBy) {
+      || mentors.length === 0   || filteredModulepoints.length === 0
+      || filteredIsForpoints.length === 0 || !difficulty || !mode ) {
       setIsLoading(false);
       return toast.warn('Please fill out all required fields or required images.');
     }
@@ -353,12 +356,12 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
         nextBatchStartDate: nextBatchStartDate,
         difficulty:difficulty,
         mode:mode,
-        assignments:assignments,
-        hiredBy:hiredBy,
+        // assignments:assignments,
+        // hiredBy:hiredBy,
         thisCourseIsFor:filteredIsForpoints,
         softwares:softwares.map(option => option.value),
         mentors:mentors.map(option => option.value),
-        avgCtc:avgCtc,
+        // avgCtc:avgCtc,
         isDemoAvailable:isDemoAvailable,
         isClubCourse:isClubCourse,
         modules: filteredModulepoints,
@@ -786,7 +789,7 @@ const handleSoftwareUploadClick = async () => {
               </div>
 
               <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
-                <label className="gap-2 text-md font-semibold required" htmlFor="nextBatchStartDate">
+                <label className="gap-2 text-md font-semibold " htmlFor="nextBatchStartDate">
                   Next Batch Start Date
                 </label>
                 <div
@@ -847,7 +850,7 @@ const handleSoftwareUploadClick = async () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+              {/* <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                 <label
                   className="gap-2 text-md font-semibold required"
                   htmlFor="avgCtc"
@@ -862,7 +865,7 @@ const handleSoftwareUploadClick = async () => {
                   type="text"
                   placeholder="Enter your Average Annual CTC"
                 />
-              </div>
+              </div> */}
 
               <div className="flex flex-col items-center gap-2 col-span-12 md:col-span-6 lg:col-span-4">
               <label className="text-md  font-semibold flex items-center space-x-2">
@@ -959,7 +962,7 @@ const handleSoftwareUploadClick = async () => {
                               </Listbox>
                             </div>
               
-                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                            {/* <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                               <label className="gap-2 text-md font-semibold required" htmlFor="courseName" >Assignments</label>
                               <input id="assignments" value={assignments}
                                 onChange={(e) => setAssignments(e.target.value)}
@@ -975,7 +978,7 @@ const handleSoftwareUploadClick = async () => {
                                 className="font-input-style text-sm min-w-0 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText"
                                 type="text"
                                 placeholder="Enter your Hired By Agencies" />
-                            </div>
+                            </div> */}
 
             </div>
             

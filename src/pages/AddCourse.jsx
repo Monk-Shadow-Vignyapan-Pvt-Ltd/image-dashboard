@@ -41,7 +41,7 @@ const AddCourse = () => {
   const [softwares, setSoftwares] = useState([]);
   const [softwaresList, setSoftwaresList] = useState([]);
   // const [avgCtc,setAvgCtc] = useState(null);
-  const [isDemoAvailable,setIsDemoAvailable] = useState(false);
+  const [isDemoAvailable,setIsDemoAvailable] = useState(true);
   const [isClubCourse,setIsClubCourse] = useState(false);
   const [IsMentorLoading,setIsMentorLoading] = useState(true);
   const [mentors,setMentors] = useState([]);
@@ -240,7 +240,7 @@ const AddCourse = () => {
 
   const handleUploadClick = async () => {
     setIsLoading(true);
-    const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
+    //const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
     const filteredIsForpoints = thisCourseIsFor.filter(item => item.description);
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
@@ -256,8 +256,8 @@ const AddCourse = () => {
       return null; // You can return `null` to exclude or just `item` to keep it.
     }).filter(item => item !== null);
     if (!courseName || !description || !file || !selectedParentCourse.id || !duration || softwares.length === 0 
-      || mentors.length === 0   || filteredModulepoints.length === 0 
-      || filteredIsForpoints.length === 0 || !difficulty || !mode ) {
+      || mentors.length === 0   
+      || !difficulty || !mode ) {
       setIsLoading(false);
       return toast.warn('Please fill out all required fields or required images.');
     }
@@ -280,13 +280,12 @@ const AddCourse = () => {
         // avgCtc:avgCtc,
         isDemoAvailable:isDemoAvailable,
         isClubCourse:isClubCourse,
-        modules: filteredModulepoints,
+        //modules: filteredModulepoints,
         others: filteredSections,
         parentCourseId: selectedParentCourse.id,
         courseEnabled: true,
         userId: userId
       };
-      console.log(data)
 
       try {
         const endpoint = `${API_BASE_URL}/courses/addCourse`;
@@ -302,7 +301,7 @@ const AddCourse = () => {
         setModulepoints([{ id: 1, title: '', description: '' }]);
         setCourseName("");
         setDescription("");
-        setNextBatchStartDate("");
+        setNextBatchStartDate(null);
         toast.success('Course added successfully!');
         setTimeout(() => {
           navigate('/course', { state: { courses: [...courses, response?.data.course], parentCourses: parentCourses, addCourse: true } });
@@ -908,7 +907,7 @@ const handleSoftwareUploadClick = async () => {
 
             <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
               <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
-                <span className="text-lg font-bold text-accent required">This Course is For</span>
+                <span className="text-lg font-bold text-accent">This Course is For</span>
               </div>
 
               <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-1">
@@ -944,7 +943,7 @@ const handleSoftwareUploadClick = async () => {
 
 
 
-            <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
+            {/* <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
               <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
                 <span className="text-lg font-bold text-accent required">Modules Of {courseName}?</span>
               </div>
@@ -993,7 +992,7 @@ const handleSoftwareUploadClick = async () => {
                 </div>
 
               </div>
-            </div>
+            </div> */}
 
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId={sections} direction="vertical">

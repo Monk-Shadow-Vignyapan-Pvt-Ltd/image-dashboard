@@ -105,7 +105,7 @@ const EditCourse = () => {
             setDescription(course?.description);
             setModulepoints(course.modules) ;
             if (course.thumbnail) decodeBase64Image(course.thumbnail, setFile);
-            setNextBatchStartDate(new Date(course?.nextBatchStartDate));
+            setNextBatchStartDate(course?.nextBatchStartDate ? new Date(course?.nextBatchStartDate) : null);
             setSoftwares(course?.softwares.map(software => ({
                 value: software,
                 label: software,
@@ -324,7 +324,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
 
   const handleUploadClick = async () => {
     setIsLoading(true);
-    const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
+    //const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
     const filteredIsForpoints = thisCourseIsFor.filter(item => item.description);
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
@@ -340,8 +340,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
       return null; // You can return `null` to exclude or just `item` to keep it.
     }).filter(item => item !== null);
     if (!courseName || !description || !file || !selectedParentCourse.id || !duration || softwares.length === 0 
-      || mentors.length === 0   || filteredModulepoints.length === 0
-      || filteredIsForpoints.length === 0 || !difficulty || !mode ) {
+      || mentors.length === 0  || !difficulty || !mode ) {
       setIsLoading(false);
       return toast.warn('Please fill out all required fields or required images.');
     }
@@ -364,7 +363,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
         // avgCtc:avgCtc,
         isDemoAvailable:isDemoAvailable,
         isClubCourse:isClubCourse,
-        modules: filteredModulepoints,
+        //modules: filteredModulepoints,
         others: filteredSections,
         parentCourseId: selectedParentCourse.id,
         courseEnabled: courseEnabled,
@@ -796,7 +795,7 @@ const handleSoftwareUploadClick = async () => {
                   className="border rounded-md p-2 cursor-pointer bg-white text-gray-700"
                   onClick={toggleCalendar}
                 >
-                  {nextBatchStartDate ? nextBatchStartDate.toDateString() : 'Select a date'}
+                  {nextBatchStartDate  ? nextBatchStartDate.toDateString() : 'Select a date'} 
                 </div>
                 {isCalendarOpen && (
                   <Calendar
@@ -867,7 +866,7 @@ const handleSoftwareUploadClick = async () => {
                 />
               </div> */}
 
-              <div className="flex flex-col items-center gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+              <div className="flex flex-col  gap-2 col-span-12 md:col-span-6 lg:col-span-4">
               <label className="text-md  font-semibold flex items-center space-x-2">
                     <input
                         type="checkbox"
@@ -984,7 +983,7 @@ const handleSoftwareUploadClick = async () => {
             
             <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
                           <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
-                            <span className="text-lg font-bold text-accent required">This Course is For</span>
+                            <span className="text-lg font-bold text-accent">This Course is For</span>
                           </div>
             
                           <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-1">
@@ -1019,7 +1018,7 @@ const handleSoftwareUploadClick = async () => {
                         </div>
 
 
-            <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
+            {/* <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
               <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
                 <span className="text-lg font-bold text-accent required">Modules Of {courseName}?</span>
               </div>
@@ -1068,7 +1067,7 @@ const handleSoftwareUploadClick = async () => {
                 </div>
 
               </div>
-            </div>
+            </div> */}
 
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId={sections} direction="vertical">

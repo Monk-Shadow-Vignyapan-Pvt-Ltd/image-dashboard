@@ -51,7 +51,7 @@ const EditCourse = () => {
   const [mentorsList, setMentorsList] = useState([]);
   const [difficulty,setDifficulty] = useState("");
   const [mode,setMode] = useState("");
-  // const [assignments,setAssignments] = useState("");
+  const [assignments,setAssignments] = useState("");
   // const [hiredBy,setHiredBy] = useState("");
   const [thisCourseIsFor, setThisCourseIsFor] = useState([{ id: 1, description: '' }]);
 
@@ -122,7 +122,7 @@ const EditCourse = () => {
             setIsCourseLoading(false);
             setDifficulty(course?.difficulty);
             setMode(course?.mode);
-            // setAssignments(course?.assignments);
+            setAssignments(course?.assignments);
             // setHiredBy(course?.hiredBy);
             setThisCourseIsFor(course?.thisCourseIsFor);
         } else {
@@ -324,7 +324,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
 
   const handleUploadClick = async () => {
     setIsLoading(true);
-    //const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
+    const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
     const filteredIsForpoints = thisCourseIsFor.filter(item => item.description);
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
@@ -355,7 +355,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
         nextBatchStartDate: nextBatchStartDate,
         difficulty:difficulty,
         mode:mode,
-        // assignments:assignments,
+        assignments:assignments,
         // hiredBy:hiredBy,
         thisCourseIsFor:filteredIsForpoints,
         softwares:softwares.map(option => option.value),
@@ -363,7 +363,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
         // avgCtc:avgCtc,
         isDemoAvailable:isDemoAvailable,
         isClubCourse:isClubCourse,
-        //modules: filteredModulepoints,
+        modules: filteredModulepoints,
         others: filteredSections,
         parentCourseId: selectedParentCourse.id,
         courseEnabled: courseEnabled,
@@ -890,7 +890,7 @@ const handleSoftwareUploadClick = async () => {
                 </label>
               </div>
 
-              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 ">
+              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                               <label className="text-md font-semibold required" htmlFor="parentCourse">Difficulty</label>
                               <Listbox value={difficulty} onChange={setDifficulty}>
                                 <div className="relative">
@@ -930,7 +930,7 @@ const handleSoftwareUploadClick = async () => {
                               </Listbox>
                             </div>
               
-                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6">
+                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                               <label className="text-md font-semibold required" htmlFor="parentCourse">Course Mode</label>
                               <Listbox value={mode} onChange={setMode}>
                                 <div className="relative">
@@ -961,8 +961,8 @@ const handleSoftwareUploadClick = async () => {
                               </Listbox>
                             </div>
               
-                            {/* <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
-                              <label className="gap-2 text-md font-semibold required" htmlFor="courseName" >Assignments</label>
+                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                              <label className="gap-2 text-md font-semibold" htmlFor="courseName" >Assignments</label>
                               <input id="assignments" value={assignments}
                                 onChange={(e) => setAssignments(e.target.value)}
                                 className="font-input-style text-sm min-w-0 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText"
@@ -970,7 +970,7 @@ const handleSoftwareUploadClick = async () => {
                                 placeholder="Enter your Assignments" />
                             </div>
               
-                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                            {/* <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                               <label className="gap-2 text-md font-semibold required" htmlFor="courseName" >Hired By</label>
                               <input id="hiredBy" value={hiredBy}
                                 onChange={(e) => setHiredBy(e.target.value)}
@@ -1018,9 +1018,9 @@ const handleSoftwareUploadClick = async () => {
                         </div>
 
 
-            {/* <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
+            <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
               <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
-                <span className="text-lg font-bold text-accent required">Modules Of {courseName}?</span>
+                <span className="text-lg font-bold text-accent">Modules Of {courseName}?</span>
               </div>
 
               <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-3">
@@ -1067,7 +1067,7 @@ const handleSoftwareUploadClick = async () => {
                 </div>
 
               </div>
-            </div> */}
+            </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId={sections} direction="vertical">

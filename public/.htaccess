@@ -1,0 +1,15 @@
+# Enable Rewrite Engine
+RewriteEngine On
+RewriteBase /
+
+# Redirect all requests to index.html except existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.html [L,QSA]
+
+# Custom redirects
+RewriteRule ^about$ /index.html [L,QSA]
+RewriteRule ^portfolio$ /index.html [L,QSA]
+RewriteRule ^project-detail$ /index.html [L,QSA]
+RewriteRule ^career$ /index.html [L,QSA]
+RewriteRule ^contact$ /index.html [L,QSA]

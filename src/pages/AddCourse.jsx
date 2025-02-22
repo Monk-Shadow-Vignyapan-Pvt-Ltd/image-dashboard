@@ -259,7 +259,7 @@ const AddCourse = () => {
     setIsLoading(true);
     const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
     const filteredIsForpoints = thisCourseIsFor.filter(item => item.description);
-    const filteredAssignments = thisCourseIsFor.filter(item => item.content && item.content !== "<p><br></p>" );
+    const filteredAssignments = assignments.filter(item => item.content && item.content !== "<p><br></p>" );
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
         const filteredPoints = item.points.filter(point => point.title && point.description);

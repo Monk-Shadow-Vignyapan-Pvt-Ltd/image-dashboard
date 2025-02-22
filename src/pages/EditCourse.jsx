@@ -51,7 +51,7 @@ const EditCourse = () => {
   const [mentorsList, setMentorsList] = useState([]);
   const [difficulty,setDifficulty] = useState("");
   const [mode,setMode] = useState("");
-  const [assignments,setAssignments] = useState("");
+  const [assignments,setAssignments] = useState([{ id: 1, content: '', }]);
   // const [hiredBy,setHiredBy] = useState("");
   const [thisCourseIsFor, setThisCourseIsFor] = useState([{ id: 1, description: '' }]);
 
@@ -122,7 +122,7 @@ const EditCourse = () => {
             setIsCourseLoading(false);
             setDifficulty(course?.difficulty);
             setMode(course?.mode);
-            setAssignments(course?.assignments);
+            setAssignments(course?.assignments || [{ id: 1, content: '', }]);
             // setHiredBy(course?.hiredBy);
             setThisCourseIsFor(course?.thisCourseIsFor);
         } else {
@@ -320,12 +320,30 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
     );
   };
 
+  const addNewAssignment = () => {
+    const maxId = Math.max(...assignments.map(item => item.id));
+    setAssignments([...assignments, { id: maxId + 1, content: '' }]);
+  };
+
+  const removeAssignment = (id) => {
+    setAssignments((prevIsForpoints) => prevIsForpoints.filter((isFor) => isFor.id !== id));
+  };
+
+  const handleEditorChange = (id,  value) => {
+    setAssignments((prevIsForpoints) =>
+      prevIsForpoints.map((isFor) =>
+        isFor.id === id ? { ...isFor, content: value } : isFor
+      )
+    );
+  };
+
 
 
   const handleUploadClick = async () => {
     setIsLoading(true);
     const filteredModulepoints = modulepoints.filter(item => item.title && item.description);
     const filteredIsForpoints = thisCourseIsFor.filter(item => item.description);
+    const filteredAssignments = thisCourseIsFor.filter(item => item.content && item.content !== "<p><br></p>" );
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
         const filteredPoints = item.points.filter(point => point.title && point.description);
@@ -355,7 +373,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
         nextBatchStartDate: nextBatchStartDate,
         difficulty:difficulty,
         mode:mode,
-        assignments:assignments,
+        assignments:filteredAssignments,
         // hiredBy:hiredBy,
         thisCourseIsFor:filteredIsForpoints,
         softwares:softwares.map(option => option.value),
@@ -385,6 +403,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
         setCourseName("");
         setDescription("");
         setNextBatchStartDate("");
+        setAssignments([{ id: 1, content: '' }]);
         toast.success('Course added successfully!');
         setTimeout(() => {
           navigate('/course', { state: { courses: courses.map(course => 
@@ -891,7 +910,7 @@ const handleSoftwareUploadClick = async () => {
                 </label>
               </div>
 
-              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+              <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-6">
                               <label className="text-md font-semibold required" htmlFor="parentCourse">Difficulty</label>
                               <Listbox value={difficulty} onChange={setDifficulty}>
                                 <div className="relative">
@@ -931,7 +950,7 @@ const handleSoftwareUploadClick = async () => {
                               </Listbox>
                             </div>
               
-                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-6">
                               <label className="text-md font-semibold required" htmlFor="parentCourse">Course Mode</label>
                               <Listbox value={mode} onChange={setMode}>
                                 <div className="relative">
@@ -962,14 +981,14 @@ const handleSoftwareUploadClick = async () => {
                               </Listbox>
                             </div>
               
-                            <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
+                            {/* <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                               <label className="gap-2 text-md font-semibold" htmlFor="courseName" >Assignments</label>
                               <input id="assignments" value={assignments}
                                 onChange={(e) => setAssignments(e.target.value)}
                                 className="font-input-style text-sm min-w-0 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText"
                                 type="text"
                                 placeholder="Enter your Assignments" />
-                            </div>
+                            </div> */}
               
                             {/* <div className="flex flex-col gap-2 col-span-12 md:col-span-6 lg:col-span-4">
                               <label className="gap-2 text-md font-semibold required" htmlFor="courseName" >Hired By</label>
@@ -980,6 +999,39 @@ const handleSoftwareUploadClick = async () => {
                                 placeholder="Enter your Hired By Agencies" />
                             </div> */}
 
+            </div>
+
+            <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">
+              <div className="relative w-full flex items-center justify-between rounded-lg gap-2">
+                <span className="text-lg font-bold text-accent">Assignments</span>
+              </div>
+
+              <div className="transition-all duration-300 overflow-hidden flex flex-col items-center justify-between gap-x-3 gap-y-4 mt-1">
+                <div className="w-full grid grid-cols-12 gap-x-3 gap-y-4">
+                </div>
+
+                <div className="point-list-style w-full gap-2 grid grid-cols-1 ">
+                  {assignments.map((idFor) => (
+                    <div key={idFor.id} className="flex flex-col relative gap-3 p-3 border-2 rounded-lg">
+                      <button onClick={() => removeAssignment(idFor.id)} className="absolute top-2 right-2">
+                        <FaPlus className="rotate-45" size={18} fill={"#f05f23"} />
+                      </button>
+                      <div className="w-full">
+                                      <Editor
+                                        id={`PointDescription-${idFor.id}`} 
+                                        content={idFor.content || ''}
+                                        setContent={(content) => handleEditorChange(idFor.id, content)}
+                                      />
+                                    </div>
+                    </div>
+                  ))}
+                  <div onClick={addNewAssignment} className="flex relative gap-2 items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer">
+                    <FaPlus size={18} fill={"#f05f23"} />
+                    <span className="text-accent font-semibold">Add New Assignment</span>
+                  </div>
+                </div>
+
+              </div>
             </div>
             
             <div className="relative col-span-12 border-2 flex flex-col rounded-lg px-4 py-4">

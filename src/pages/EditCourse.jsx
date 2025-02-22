@@ -339,7 +339,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
       // If the item does not match any of the criteria, return the item unchanged.
       return null; // You can return `null` to exclude or just `item` to keep it.
     }).filter(item => item !== null);
-    if (!courseName || !description || !file || !selectedParentCourse.id || !duration || softwares.length === 0 
+    if (!courseName || !description || description === "<p><br></p>" || !file || !selectedParentCourse.id || !duration || softwares.length === 0 
       || mentors.length === 0  || !difficulty || !mode ) {
       setIsLoading(false);
       return toast.warn('Please fill out all required fields or required images.');
@@ -741,8 +741,9 @@ const handleSoftwareUploadClick = async () => {
 
               <div className="flex flex-col gap-2 col-span-12 md:col-span-12 lg:col-span-8 h-full">
                 <label className="gap-2 text-md font-semibold required" htmlFor="description" >Course Description</label>
-                <textarea id="description" value={description}
-                  onChange={(e) => setDescription(e.target.value)} className="font-input-style text-sm min-h-40 min-w-0 flex-1 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText" placeholder="Enter Course Description" />
+                <Editor content={description} setContent={setDescription} />
+                {/* <textarea id="description" value={description}
+                  onChange={(e) => setDescription(e.target.value)} className="font-input-style text-sm min-h-40 min-w-0 flex-1 rounded-lg px-3 py-2 focus:outline-accent bg-mainBg placeholder:text-secondaryText" placeholder="Enter Course Description" /> */}
               </div>
 
               <div className="col-span-12 lg:col-span-4 uploader-container flex gap-2 flex-col">

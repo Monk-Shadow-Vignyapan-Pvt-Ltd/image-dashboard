@@ -347,7 +347,7 @@ const decodeBase64Image = (base64Image, setFileFunction) => {
 
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
-        const filteredPoints = item.points.filter(point => point.title && point.description);
+        const filteredPoints = item.points.filter(point => point.title );
         if (filteredPoints.length > 0) {
           return {
             ...item,

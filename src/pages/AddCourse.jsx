@@ -262,7 +262,7 @@ const AddCourse = () => {
     const filteredAssignments = assignments.filter(item => item.content && item.content !== "<p><br></p>" );
     const filteredSections = sections.map((item, index) => {
       if (item.sectionName) {
-        const filteredPoints = item.points.filter(point => point.title && point.description);
+        const filteredPoints = item.points.filter(point => point.title);
         if (filteredPoints.length > 0) {
           return {
             ...item,

@@ -11,6 +11,7 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import ParentCourse from './ParentCourse.jsx';
 import AccessDenied from '../components/AccessDenied.jsx';
+import { IoCopyOutline } from "react-icons/io5";
 
 const Course = () => {
     const [selectedParentCourse, setSelectedParentCourse] = useState('all');  // Default to empty string
@@ -101,6 +102,27 @@ const Course = () => {
         }
     };
 
+    const handleCloneClick = async (courseId) => {
+        setIsProcessing(true); // Show loader before the operation
+
+        setTimeout(async () => {
+            try {
+                const response = await axios.post(`${API_BASE_URL}/courses/cloneCourse/${courseId}`, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                toast.success('Course Cloned successfully!');
+                [...courses, response?.data.clonedCourse]
+                setCourses([...courses, response?.data.clonedCourse]);
+                setFilteredCourses([...courses, response?.data.clonedCourse]);
+            } catch (error) {
+                console.error('Error cloning course:', error);
+                toast.error('Failed to clone course.');
+            } finally {
+                setIsProcessing(false); // Hide loader after the operation
+            }
+        }, 500); // Delay for a visible loader
+    };
+
     const handleCourseOnOff = async (course, value) => {
         setIsProcessing(true); // Show loader before the operation
         const updatedCourse = { ...course, courseEnabled: value === 'on' };
@@ -183,7 +205,12 @@ const Course = () => {
                                 <div key={course._id} className="flex flex-col gap-3 rounded-lg p-3 border-2">
                                     <img className="w-full min-h-50 max-h-50 rounded-lg border-2" src={course.thumbnail} alt="" />
                                     <div className="flex flex-col gap-1.5">
+                                    <div className='flex '>
                                         <span className="text-lg text-accent font-semibold">{course.courseName}</span>
+                                        <button className='ml-auto' onClick={() => handleCloneClick(course._id)}>
+                                                <IoCopyOutline size={20} fill={"#444050"} />
+                                            </button>
+                                            </div>
                                         {/* <span className="text-md">Next Batch Start Date : {new Date(course?.nextBatchStartDate).toDateString()}</span> */}
                                         <span className="text-md">{parentCourse?.parentCourseName || 'Parent Course Not Found'}</span>
                                     </div>
